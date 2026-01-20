@@ -60,7 +60,7 @@ export async function markAllNotificationsRead() {
     await markAllUserNotificationsRead(userId)
     try {
         await ensureBroadcastTables()
-        const now = new Date()
+        const now = Date.now()
         await db.run(sql`
             INSERT INTO broadcast_reads (message_id, user_id, created_at)
             SELECT m.id, ${userId}, ${now}
@@ -211,7 +211,7 @@ export async function markNotificationRead(id: number) {
                 .where(eq(broadcastMessages.id, messageId))
                 .limit(1)
             if (exists.length > 0) {
-                const now = new Date()
+                const now = Date.now()
                 await db.run(sql`
                     INSERT OR IGNORE INTO broadcast_reads (message_id, user_id, created_at)
                     VALUES (${messageId}, ${userId}, ${now})
@@ -235,7 +235,7 @@ export async function clearMyNotifications() {
     await setBroadcastClearedAt(userId, Date.now())
     try {
         await ensureBroadcastTables()
-        const now = new Date()
+        const now = Date.now()
         await db.run(sql`
             INSERT INTO broadcast_reads (message_id, user_id, created_at)
             SELECT m.id, ${userId}, ${now}
